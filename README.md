@@ -68,6 +68,8 @@ A estrutura do projeto segue a convenção de um projeto MVC padrão em PHP. Aqu
 php -S localhost:8080 -t public
 ```
 - Acesse o projeto em seu navegador web, digitando o seguinte endereço: http://localhost:8080.
+- login: admin@admin
+- password: admin
 
 O projeto estará funcionando e você poderá navegar pela loja, visualizar os produtos disponíveis e adicionar itens ao carrinho de compras.
 
