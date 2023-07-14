@@ -1,4 +1,4 @@
-## Projeto Loja PHP + Postgres MVC
+## Projeto Loja PHP + Postgres - Padrão MVC
 
 Este é um projeto simples de uma loja desenvolvido utilizando o padrão de arquitetura MVC (Model-View-Controller) em PHP. O objetivo do projeto é fornecer um exemplo básico de como estruturar e implementar um sistema web.
 
