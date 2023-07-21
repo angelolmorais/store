@@ -2,7 +2,8 @@
 $controller = "producttype";
 include __DIR__ . '/includes/header.php';
 ?>
-<h1>List of Product Types</h1>
+<div class="container mt-5">
+<h1>Product Types List</h1>
 <a href="/producttype/create" class="btn btn-primary">Create Product Type</a>
 <table class="table">
     <thead>
@@ -20,12 +21,12 @@ include __DIR__ . '/includes/header.php';
                 <td><?php echo $productType['name']; ?></td>
                 <td><?php echo $productType['tax_percentage']; ?></td>
                 <td>
-                    <a href="/producttype/edit/<?php echo $productType['id']; ?>" class="btn btn-primary">Edit</a>
+                    <a href="/producttype/update/<?php echo $productType['id']; ?>" class="btn btn-primary">Edit</a>
                     <a href="/producttype/delete/<?php echo $productType['id']; ?>" class="btn btn-danger">Delete</a>
                 </td>
             </tr>
         <?php endforeach; ?>
     </tbody>
 </table>
-
+</div>
 <?php include 'includes/footer.php'; ?>

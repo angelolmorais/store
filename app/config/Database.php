@@ -1,5 +1,11 @@
 <?php
+
+namespace App\Config;
+
+use PDO;
+use PDOException;
 class Database {
+    private static $instance;
     private $host;
     private $port;
     private $dbName;
@@ -13,6 +19,14 @@ class Database {
         $this->dbName = $dbName;
         $this->user = $user;
         $this->password = $password;
+    }
+
+    public static function getInstance()
+    {
+        if (!self::$instance) {
+            self::$instance = new self(DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD);
+        }
+        return self::$instance;
     }
     
     public function connect() {
@@ -33,5 +47,4 @@ class Database {
     public function getConnection() {
         return $this->connection;
     }
-    
 }

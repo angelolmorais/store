@@ -1,4 +1,8 @@
 <?php 
+
+namespace App\Models;
+use App\Config\Database;
+
 class Product
 {
     private $id;
@@ -63,7 +67,15 @@ class Product
     {
         $this->taxPercentage = $taxPercentage;
     }
-    
+
+    public function getPrice()
+    {
+        return $this->value; 
+    }
+    public function getTaxRate()
+    {
+        return $this->taxRate;
+    }
     public function save()
     {
         $db = new Database(DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD);
@@ -151,5 +163,17 @@ class Product
         
         $stmt = $connection->prepare('DELETE FROM products WHERE id = ?');
         $stmt->execute([$id]);
+    }
+
+    public static function findAll()
+    {
+        $db = new Database(DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD);
+        $db->connect();
+        $connection = $db->getConnection();
+
+        $stmt = $connection->prepare('SELECT * FROM products');
+        $stmt->execute();
+
+        return $stmt->fetchAll();
     }
 }

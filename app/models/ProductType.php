@@ -1,4 +1,7 @@
 <?php 
+namespace App\Models;
+use App\Config\Database;
+
 class ProductType
 {
     private $id;
@@ -42,17 +45,25 @@ class ProductType
     }
     
     public function save()
-    {
-        $db = new Database(DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD);
-        $db->connect();
-        $connection = $db->getConnection();
-        
-        $stmt = $connection->prepare('INSERT INTO product_types (name, tax_percentage) VALUES (?, ?)');
-        $stmt->execute([
-            $this->name,
-            $this->taxPercentage
-        ]);
+{
+    $db = new Database(DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD);
+    $db->connect();
+    $connection = $db->getConnection();
+
+    $stmt = $connection->prepare('INSERT INTO product_types (name, tax_percentage) VALUES (?, ?)');
+    $success = $stmt->execute([$this->name, $this->taxPercentage]);
+
+    if (!$success) {
+        $errorInfo = $stmt->errorInfo();
+        throw new \RuntimeException("Failed to save ProductType to the database: {$errorInfo[2]}");
     }
+
+    $this->id = $connection->lastInsertId();
+    if (!$this->id) {
+        throw new \RuntimeException("Failed to get a valid ID after saving ProductType to the database.");
+    }
+}
+
     
     public static function fetchAll()
     {

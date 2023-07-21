@@ -1,6 +1,7 @@
 <?php
 $controller = "dashboard";
 include __DIR__ . '/includes/header.php';?>
+<div class="container mt-5">
    <h1>Dashboard</h1>
     <p>Welcome to the dashboard, <?php echo $user->getName(); ?>!</p>
     <p>Here, you can manage various aspects of your account and access different features.</p>
@@ -14,4 +15,5 @@ include __DIR__ . '/includes/header.php';?>
         <li><a href="/user/delete/<?php echo $user->getId(); ?>">Delete Account</a></li>
         <li><a href="/controller/logout">Logout</a></li>
     </ul>
+</div>
 <?php include 'includes/footer.php'; ?>

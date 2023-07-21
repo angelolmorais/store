@@ -1,150 +1,210 @@
 <?php
+namespace App\Models;
+use App\Config\Database;
 
 class Sale
 {
     private $id;
-    private $productId;
-    private $quantity;
-    private $totalValue;
-    private $taxValue;
-    private $saleDate;
-    private $userId;
-   
-    
-    public function __construct( $productId, $quantity, $totalValue, $taxValue, $saleDate, $userId)
+    private $client_id;
+    private $productsData = [];
+    private $saleDate; 
+
+    public function __construct($client_id, $id = null, $productsData = [], $saleDate = null)
     {
-        $this->productId = $productId;
-        $this->quantity = $quantity;
-        $this->totalValue = $totalValue;
-        $this->taxValue = $taxValue;
-        $this->saleDate = $saleDate;
-        $this->userId = $userId;
+        $this->id = $id;
+        $this->client_id = $client_id;
+        $this->productsData = $productsData;
+        $this->saleDate = $saleDate; 
     }
-    
+
     public function getId()
     {
         return $this->id;
     }
-    
-    public function getProductId()
+
+    public function getClientId()
     {
-        return $this->productId;
+        return $this->client_id;
     }
-    
-    public function getQuantity()
+
+    public function getProductsData()
     {
-        return $this->quantity;
+        return $this->productsData;
     }
-    
-    public function getTotalValue()
-    {
-        return $this->totalValue;
-    }
-    
-    public function getTaxValue()
-    {
-        return $this->taxValue;
-    }
-    
     public function getSaleDate()
     {
         return $this->saleDate;
     }
-    
-    public function setId($id)
+    public static function findAll()
     {
-        $this->id = $id;
+        $db = new Database(DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD);
+        $db->connect();
+        $connection = $db->getConnection();
+
+        $stmt = $connection->prepare('SELECT * FROM sales');
+        $stmt->execute();
+
+        $sales = [];
+        while ($row = $stmt->fetch()) {
+            $sale = self::findById($row['id']);
+            $sales[] = $sale;
+        }
+
+        return $sales;
+    }
+
+    public static function findById($id)
+    {
+        $db = new Database(DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD);
+        $db->connect();
+        $connection = $db->getConnection();
+
+        $stmt = $connection->prepare('SELECT * FROM sales WHERE id = ?');
+        $stmt->execute([$id]);
+        $saleData = $stmt->fetch();
+
+        if (!$saleData) {
+            return null;
+        }
+
+        $sale = new Sale($saleData['client_id'], $saleData['id'], [], $saleData['sale_date']); 
+        $sale->fetchProductsData($connection);
+
+        return $sale;
     }
     
-    public function getUserId() {
-        return $this->userId;
+    public function addProduct(Product $product, $quantity)
+    {
+        $this->productsData[] = [
+            'product' => $product,
+            'quantity' => $quantity
+        ];
+    }
+
+    public function getTotalPrice()
+    {
+        $totalPrice = 0;
+        foreach ($this->productsData as $productData) {
+            $product = $productData['product'];
+            $quantity = $productData['quantity'];
+            $totalPrice += $product->getPrice() * $quantity;
+        }
+        return $totalPrice;
+    }
+
+    private function fetchProductsData()
+    {
+        $db = new Database(DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD);
+        $db->connect();
+        $connection = $db->getConnection();
+
+        $stmt = $connection->prepare('SELECT * FROM sale_items WHERE sale_id = ?');
+        $stmt->execute([$this->id]);
+        $items = $stmt->fetchAll();
+
+        foreach ($items as $item) {
+            $product = Product::findById($item['product_id']);
+
+            if ($product) {
+                $this->addProduct($product, $item['quantity']);
+            }
+        }
+    }
+
+    public static function findByClientId($client_id)
+    {
+        $db = new Database(DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD);
+        $db->connect();
+        $connection = $db->getConnection();
+    
+        $stmt = $connection->prepare('SELECT * FROM sales WHERE client_id = ?');
+        $stmt->execute([$client_id]);
+        $sales = $stmt->fetchAll();
+    
+        $result = [];
+        foreach ($sales as $sale) {
+            $sale_id = $sale['id'];
+            $productsData = [];
+    
+           $stmt = $connection->prepare('SELECT * FROM sale_items WHERE sale_id = ?');
+            $stmt->execute([$sale_id]);
+            $items = $stmt->fetchAll();
+            
+            foreach ($items as $item) {
+                $product = Product::findById($item['product_id']);
+    
+                if ($product) {
+                    $productsData[] = [
+                        'product' => $product,
+                        'quantity' => $item['quantity'],
+                        'total_value' => $item['total_value'],
+                        
+                    ];
+                }
+            }
+    
+            $saleObj = new Sale($client_id, $sale_id, $productsData);
+    
+            // Calcular totais para o cliente
+            $totalQuantity = 0;
+            $totalUnitPrice = 0;
+            $totalPurchaseValue = 0;
+            $totalTaxUnitValue = 0;
+            $totalTaxValue = 0;
+            $totalSale = 0;
+    
+            foreach ($productsData as $item) {
+                $totalQuantity += $item['quantity'];
+                $totalUnitPrice += $item['product']->getPrice();
+                $totalPurchaseValue += $item['product']->getPrice() * $item['quantity'];
+                $totalTaxUnitValue += $item['product']->getTaxPercentage();
+                $totalTaxValue += $item['product']->getTaxPercentage() * $item['quantity'];
+                $totalSale += $item['total_value'];
+                
+            }
+    
+            $saleObj->totalQuantity = $totalQuantity;
+            $saleObj->totalUnitPrice = $totalUnitPrice;
+            $saleObj->totalPurchaseValue = $totalPurchaseValue;
+            $saleObj->totalTaxUnitValue = $totalTaxUnitValue;
+            $saleObj->totalTaxValue = $totalTaxValue;
+            $saleObj->totalSale = $totalSale;
+    
+            $result[] = $saleObj;
+        }
+    
+        return $result;
     }
     
-    public function setUserId($userId) {
-        $this->userId = $userId;
-    }
     public function save()
     {
         $db = new Database(DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD);
         $db->connect();
         $connection = $db->getConnection();
-        
-        $stmt = $connection->prepare('INSERT INTO sales (product_id,  quantity, total_value, user_id) VALUES (?, ?, ?, ?)');
-        $stmt->execute([$this->productId, $this->quantity, $this->totalValue, $_SESSION['user_id']]);
+
+        $stmt = $connection->prepare('INSERT INTO sales (client_id, total_value, sale_date) VALUES (?, ?, ?)');
+        $stmt->execute([$this->client_id, $this->getTotalPrice(), date('Y-m-d H:i:s')]);
         $this->id = $connection->lastInsertId();
+
+        $this->saveSaleItems($connection);
     }
-    
-    public static function getAll()
+
+    private function saveSaleItems()
     {
         $db = new Database(DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD);
         $db->connect();
         $connection = $db->getConnection();
-        
-        $stmt = $connection->prepare('SELECT * FROM sales');
-        $stmt->execute();
-        
-        return $stmt->fetchAll();
-    }
-    
-    public static function getById($id)
-    {
-        $db = new Database(DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD);
-        $db->connect();
-        $connection = $db->getConnection();
-        
-        $stmt = $connection->prepare('SELECT * FROM sales WHERE id = ?');
-        $stmt->execute([$id]);
-        $sale = $stmt->fetch();
-        
-        if (!$sale) {
-            return null;
+
+        foreach ($this->productsData as $productData) {
+            $product_id = $productData['product']->getId();
+            $quantity = $productData['quantity'];
+            $total_value = $productData['product']->getPrice() * $quantity;
+
+            $stmt = $connection->prepare('INSERT INTO sale_items (sale_id, product_id, quantity, total_value) VALUES (?, ?, ?, ?)');
+            $stmt->execute([$this->id, $product_id, $quantity, $total_value]);
         }
-        
-        return new Sale($sale['product_id'], $sale['quantity'], $sale['total_value'], $sale['tax_value'], $sale['sale_date']);
     }
-    public static function fetchAll()
-    {
-        $db = new Database(DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD);
-        $db->connect();
-        $connection = $db->getConnection();
-        
-        $stmt = $connection->prepare('SELECT
-                                        	sales.id,
-                                        	products.name AS name,
-                                        	sales.quantity,
-                                        	ROUND(products.value,2) AS unit_price,
-                                        	products.value * sales.quantity as total_price,
-                                        	ROUND(product_types.tax_percentage,2) AS item_tax,
-                                        	ROUND( product_types.tax_percentage * sales.quantity, 2 ) AS total_tax,	
-                                        	ROUND(products.value * sales.quantity * (1 + product_types.tax_percentage / 100), 2) AS total_amount,
-                                        	sales.sale_date 
-                                        FROM
-                                        	sales
-                                        	JOIN products ON sales.product_id = products.
-                                        	ID JOIN product_types ON products.type_id = product_types.ID 
-                                        ORDER BY
-                                        	sales.sale_date DESC;');
-        $stmt->execute();
-        
-        return $stmt->fetchAll();
-    }
-    public function update()
-    {
-        $db = new Database(DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD);
-        $db->connect();
-        $connection = $db->getConnection();
-        
-        $stmt = $connection->prepare('UPDATE sales SET product_id = ?, quantity = ?, total_value = ?, tax_value = ?, sale_date = ? WHERE id = ?');
-        $stmt->execute([$this->productId, $this->quantity, $this->totalValue, $this->taxValue, $this->saleDate, $this->id]);
-    }
-    
-    public static function delete($id)
-    {
-        $db = new Database(DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD);
-        $db->connect();
-        $connection = $db->getConnection();
-        
-        $stmt = $connection->prepare('DELETE FROM sales WHERE id = ?');
-        $stmt->execute([$id]);
-    }
+
+
 }
+?>

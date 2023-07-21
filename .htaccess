@@ -9,3 +9,4 @@ RewriteRule ^(.*)$ /public/index.php?params=$1 [L,QSA]
 #RewriteCond %{REQUEST_FILENAME} !-f
 #RewriteCond %{REQUEST_FILENAME} !-d
 #RewriteRule ^(.*)$ /public/index.php?/$1 [L]
+###1	Angelo Morais	angelolmorais@gmail.com	$2y$10$zA7ky9EyZawvj3D3todTA.1mpjqoidugnbcZQmSngtG0A8X4XfGiW

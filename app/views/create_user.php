@@ -1,4 +1,7 @@
-<?php include __DIR__ . '/includes/header.php'; ?>
+<?php 
+$controller = "user";
+include __DIR__ . '/includes/header.php'; ?>
+<div class="container mt-5">
 <h1>Create User</h1>
 
 <form action="/user/create" method="POST">
@@ -16,5 +19,5 @@
     </div>
     <button type="submit" class="btn btn-primary">Create</button>
 </form>
-
+</div>
 <?php include 'includes/footer.php'; ?>

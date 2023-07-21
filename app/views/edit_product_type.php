@@ -2,8 +2,9 @@
 $controller = "producttype";
 include __DIR__ . '/includes/header.php';
 ?>
+<div class="container mt-5">
  <h1>Edit Product Type</h1>
-    <form method="POST" action="/producttype/edit/<?php echo $productType->getId(); ?>">
+    <form method="POST" action="/producttype/update/<?php echo $productType->getId(); ?>">
         <div class="mb-3">
             <label for="name" class="form-label">Name:</label>
             <input type="text" name="name" id="name"  class="form-control" value="<?php echo $productType->getName(); ?>" required>
@@ -14,4 +15,5 @@ include __DIR__ . '/includes/header.php';
         </div>
        	 <input type="submit" class="btn btn-primary" value="Update">
     </form>
+</div>
 <?php include 'includes/footer.php'; ?>

@@ -1,4 +1,7 @@
 <?php 
+namespace App\Models;
+use App\Config\Database;
+
 class User
 {
     private $id;
@@ -45,6 +48,10 @@ class User
     public function getPassword()
     {
         return $this->password;
+    }
+    public function setPassword($password)
+    {
+        $this->password = $password;
     }
     
     public function verifyPassword($password)

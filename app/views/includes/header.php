@@ -5,7 +5,6 @@ if (!isset($_SESSION['user_id'])) {
     header('Location: /user/login');
     exit();
 }
-$controller = $_GET['controller'] ?? '';
 ?>
 <!DOCTYPE html>
 <html>
@@ -17,25 +16,27 @@ $controller = $_GET['controller'] ?? '';
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/sale/list">My System</a>
+            <a class="navbar-brand" href="/user/dashboard">My System</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
-                    <li class="nav-item <?php echo ($controller === 'producttype') ? 'active' : ''; ?>">
-                        <a class="nav-link" href="/producttype/list">Product Types</a>
+                <li class="nav-item <?php echo ($controller === 'producttype') ? 'active' : ''; ?>">
+                        <a class="nav-link" href="/producttype/read">Product Types</a>
                     </li>
-                    <li class="nav-item <?php echo ($controller == 'product') ? 'active' : ''; ?>">
-                        <a class="nav-link" href="/product/list">Products</a>
+                    <li class="nav-item <?php echo ($controller === 'product') ? 'active' : ''; ?>">
+                        <a class="nav-link" href="/product/read">Products</a>
                     </li>
-                    
+                    <li class="nav-item <?php echo ($controller === 'client') ? 'active' : ''; ?>">
+                        <a class="nav-link" href="/client/read">Client</a>
+                    </li>
                     <li class="nav-item <?php echo ($controller === 'sale') ? 'active' : ''; ?>">
-                        <a class="nav-link" href="/sale/list">Sales</a>
+                        <a class="nav-link" href="/sale/read">Sales</a>
                     </li>
                     <li class="nav-item <?php echo ($controller === 'user') ? 'active' : ''; ?>">
-                        <a class="nav-link" href="/user/list">User</a>
+                        <a class="nav-link" href="/user/read">User</a>
                     </li>
                                   
                 </ul>

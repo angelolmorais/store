@@ -2,6 +2,7 @@
 $controller = "product";
 include __DIR__ . '/includes/header.php';
 ?>
+<div class="container mt-5">
 <h1>Product List</h1>
 <a href="/product/create" class="btn btn-primary">Create Product</a>
 
@@ -23,7 +24,7 @@ include __DIR__ . '/includes/header.php';
                 <td><?php echo $product['type_name']; ?></td>
                 <td><?php echo $product['value']; ?></td>
                 <td>
-                <a href="/product/edit/<?php echo $product['id']; ?>" class="btn btn-primary">Edit</a>
+                <a href="/product/update/<?php echo $product['id']; ?>" class="btn btn-primary">Edit</a>
 				<a href="/product/delete/<?php echo $product['id']; ?>" class="btn btn-danger">Delete</a>
                 
                 
@@ -33,5 +34,5 @@ include __DIR__ . '/includes/header.php';
         <?php endforeach; ?>
     </tbody>
 </table>
-
+</div>
 <?php include 'includes/footer.php'; ?>

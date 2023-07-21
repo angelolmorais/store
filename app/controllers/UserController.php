@@ -1,10 +1,8 @@
 <?php 
-class UserController {
-    public function list() {
-        $pageTitle = "List User";
-        $users = User::findAll();
-        include __DIR__ . '/../views/list_users.php';
-    }
+namespace App\Controllers;
+use App\Models\User; 
+
+class UserController {  
     
     public function create() {
         $pageTitle = "Create User";
@@ -14,18 +12,23 @@ class UserController {
             $email = $_POST['email'];
             $password = $_POST['password'];
             
-            // Pass the id as null when creating a new user
             $user = new User(null, $name, $email, $password);
             $user->save();
             
-            header('Location: /user/list');
+            header('Location: /user/read');
             exit();
         }
         
         include __DIR__ . '/../views/create_user.php';
     }
+
+    public function read() {
+        $pageTitle = "List User";
+        $users = User::findAll();
+        include __DIR__ . '/../views/list_users.php';
+    }
     
-    public function edit($id) {
+    public function update($id) {
         $pageTitle = "Edit User";
         if (!is_numeric($id)) {
             $error = "Invalid user ID";
@@ -45,7 +48,7 @@ class UserController {
             $user->setEmail($email);
             $user->update();
             
-            header('Location:/user/list');
+            header('Location:/user/read');
             exit();
         }
         
@@ -61,7 +64,7 @@ class UserController {
         
         $user->delete($id);
         
-        header('Location: /user/list');
+        header('Location: /user/read');
         exit();
     }
     
@@ -72,14 +75,14 @@ class UserController {
             $email = isset($_POST['email']) ? $_POST['email'] : '';
             $password = isset($_POST['password']) ? $_POST['password'] : '';
             
-            $user = User::findByEmail($email); // Find user by email
+            $user = User::findByEmail($email); 
             
             if ($user && password_verify($password, $user->getPassword())) {
                 session_start();
                 $_SESSION['user_id'] = $user->getId();
                 $_SESSION['user_name'] = $user->getName();
                
-                header('Location: /sale/list');
+                header('Location: /sale/read');
                 exit();
             } else {
                 $error = "Invalid credentials. Please try again.";
@@ -88,7 +91,6 @@ class UserController {
         
         include __DIR__ . '/../views/login.php';
     }
-    
     
     
     public function logout() {
