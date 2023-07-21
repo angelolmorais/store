@@ -65,7 +65,63 @@ A estrutura do projeto segue a convenção de um projeto MVC padrão em PHP. Aqu
 
 ![MER - Store](database.png)
 
+# Tabelas do Banco de Dados
 
+## Tabela `clients`
+
+```sql
+CREATE TABLE public.clients (
+    id integer NOT NULL,
+    name character varying(255) NOT NULL,
+    email character varying(255) NOT NULL,
+    phone character varying(20)
+);
+```
+## Tabela `product_types`
+```sql
+CREATE TABLE product_types (
+    id integer NOT NULL,
+    name character varying(255) NOT NULL,
+    tax_percentage numeric(10,2)
+);
+```
+## Tabela `products`
+```sql
+CREATE TABLE products (
+    id integer NOT NULL,
+    name character varying(255) NOT NULL,
+    type_id integer NOT NULL,
+    value numeric(10,2) NOT NULL
+);
+```
+## Tabela `sale_items`
+```sql
+CREATE TABLE sale_items (
+    id integer NOT NULL,
+    sale_id integer NOT NULL,
+    product_id integer NOT NULL,
+    quantity numeric NOT NULL,
+    total_value numeric(10,2) NOT NULL
+);
+```
+## Tabela `sales`
+```sql
+CREATE TABLE sales (
+    id integer NOT NULL,
+    client_id integer NOT NULL,
+    total_value numeric(10,2) NOT NULL,
+    sale_date timestamp(0) without time zone DEFAULT now() NOT NULL
+);
+```
+## Tabela `users`
+```sql
+CREATE TABLE users (
+    id integer NOT NULL,
+    name character varying(255) NOT NULL,
+    email character varying(255) NOT NULL,
+    password character varying(255) NOT NULL
+);
+```
 ## Executando o Projeto
 - Certifique-se de estar no diretório raiz do projeto no seu terminal.
 - Execute o seguinte comando para iniciar o servidor embutido do PHP:
