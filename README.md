@@ -61,6 +61,11 @@ A estrutura do projeto segue a convenção de um projeto MVC padrão em PHP. Aqu
 - LICENSE: Arquivo de licença do projeto.
 - README.md: Este arquivo que contém informações sobre o projeto.
 
+## Estrutura do Banco de Dados
+
+![MER - Store](database.png)
+
+
 ## Executando o Projeto
 - Certifique-se de estar no diretório raiz do projeto no seu terminal.
 - Execute o seguinte comando para iniciar o servidor embutido do PHP:
