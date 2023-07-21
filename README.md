@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 ## Projeto Loja PHP + Postgres - Padrão MVC
 
 Este é um projeto simples de uma loja desenvolvido utilizando o padrão de arquitetura MVC (Model-View-Controller) em PHP. O objetivo do projeto é fornecer um exemplo básico de como estruturar e implementar um sistema web.
@@ -176,4 +176,4 @@ Este projeto está licenciado sob a [MIT License](https://pt.wikipedia.org/wiki/
 
 Certifique-se de seguir essas etapas e configurações para garantir uma instalação e execução corretas do projeto PHP MVC Store. Se precisar de mais ajuda, estou à disposição para ajudar!
 
->>>>>>> 653901a196c1a6b9aacca209c418bed037270812
+
